@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সেহরির সময় গণনা</title>
+   <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans Bengali', sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #121212, #1f1f1f, #2a2a2a);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 400px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.container:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #FFD700;
+    margin-bottom: 15px;
+}
+
+.clock-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.1), 
+                inset -5px -5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.clock {
+    font-size: 34px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 1.2px;
+}
+
+.date {
+    font-size: 18px;
+    color: #ccc;
+    margin-top: 5px;
+}
+
+.countdown-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.countdown {
+    font-size: 20px;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3), 
+                -3px -3px 10px rgba(255, 255, 255, 0.1);
+}
+
+.sehri {
+    background: rgba(173, 216, 230, 0.3);
+    color: #00bcd4;
+}
+
+.iftar {
+    background: rgba(255, 165, 0, 0.3);
+    color: #ff9800;
+}
+
+#rozaDisplay {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+}
+
+.time-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: inset 3px 3px 8px rgba(255, 255, 255, 0.1),
+                inset -3px -3px 8px rgba(0, 0, 0, 0.3);
+}
+
+label {
+    font-size: 15px;
+    color: #FFD700;
+    margin-bottom: 8px;
+}
+
+input[type="time"] {
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    font-size: 18px;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(255, 64, 108, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    box-shadow: 0 8px 20px rgba(255, 64, 108, 0.4);
+}
+
+#audio-button {
+    background: linear-gradient(to right, #ff5722, #ff9800);
+    color: white;
+}
+
+#audio-button:hover {
+    background: linear-gradient(to right, #ff9800, #ff5722);
+}
+
+#iftar-display, #sehri-display {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#iftar-display.show, #sehri-display.show {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 500px) {
+    .container {
+        padding: 18px;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .clock {
+        font-size: 28px;
+    }
+
+    .countdown {
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    input[type="time"], button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    #rozaDisplay {
+        font-size: 18px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #rozaDisplay {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+
+    </style>
+</head>
+<body onload="initializeTimes()">
+    <div class="container">
+        <h1>🌙 সেহরি ও ইফতার সময় গণনা ⏰</h1>
+        
+        <div class="clock-container">
+    <div class="clock" id="liveClock">00:00:00 AM</div>
+    <p class="date" id="dateDisplay"></p> <!-- নতুন তারিখ দেখানোর ট্যাগ -->
+    <p class="message" id="message"></p> <!-- আগের মতোই ম্যাসেজ দেখানোর জন্য -->
+</div>
+
+
+        <div class="countdown-container">
+          <p id="rozaDisplay" style="font-size: 18px; font-weight: bold; color: #ffffff;"></p>
+            <p id="countdown" class="countdown sehri"></p>
+            <p id="iftar-countdown" class="countdown iftar"></p>
+        </div>
+
+        <div class="time-inputs">
+            <div class="input-group">
+                <label for="sehri-time">সেহরির সময়</label>
+                <input id="sehri-time" type="time">
+                <button id="set-sehri-button" onclick="setSehriTime()">⏰ সেট করুন</button>
+                <p id="sehri-display"></p>
+            </div>
+
+            <div class="input-group">
+                <label for="iftar-time">ইফতারের সময়</label>
+                <input id="iftar-time" type="time">
+                <button id="set-iftar-button" onclick="setIftarTime()">🌙 সেট করুন</button>
+                <p id="iftar-display"></p>
+            </div>
+        </div>
+
+        <button id="play-button" class="audio-button" onclick="enableAudio()">🔊 অডিও চালু করুন</button>
+    </div>
+
+
+    <script>
+let audioEnabled = false;
+let sehriTime = null;
+let globalAudio = new Audio(); // গ্লোবাল অডিও অবজেক্ট  
+
+let messages = [
+    { offset: "02:32:00", text: "সেহরি খাওয়ার আর মাত্র ২ ঘন্টা ৩০ মিনিট সময় বাকি আছে", audio: "sehri_2_30.mp3" },
+    { offset: "02:20:00", text: "সেহরি খাওয়ার আর মাত্র ২ ঘন্টা ২০ মিনিট সময় বাকি আছে", audio: "sehri_2_20.mp3" },
+    { offset: "02:15:00", text: "সেহরি খাওয়ার আর মাত্র ২ ঘন্টা ১৫ মিনিট সময় বাকি আছে", audio: "sehri_2_15.mp3" },
+    { offset: "02:00:00", text: "সেহরি খাওয়ার আর মাত্র ২ ঘন্টা বাকি আছে", audio: "sehri_2.mp3" },
+    { offset: "01:45:00", text: "সেহরি খাওয়ার আর মাত্র ১ ঘন্টা ৪৫ মিনিট সময় বাকি আছে", audio: "sehri_1_45.mp3" },
+    { offset: "01:30:00", text: "সেহরি খাওয়ার আর মাত্র ১ ঘন্টা ৩০ মিনিট সময় বাকি আছে", audio: "sehri_1_30.mp3" },
+    { offset: "01:15:00", text: "সেহরি খাওয়ার আর মাত্র ১ ঘন্টা ১৫ মিনিট সময় বাকি", audio: "sehri_1_15.mp3" },
+    { offset: "01:00:00", text: "সেহরি খাওয়ার আর মাত্র এক ঘন্টা সময় বাকি আছে", audio: "sehri_1.mp3" },
+    { offset: "00:45:00", text: "সেহরি খাওয়ার আর মাত্র ৪৫ মিনিট সময় বাকি আছে", audio: "sehri_45.mp3" },
+    { offset: "00:30:00", text: "সেহরি খাওয়ার আর মাত্র ৩০ মিনিট সময় বাকি আছে", audio: "sehri_30.mp3" },
+    { offset: "00:15:00", text: "সেহরি খাওয়ার আর মাত্র ১৫ মিনিট সময় বাকি আছে", audio: "sehri_15.mp3" },
+    { offset: "00:05:00", text: "সেহরি খাওয়ার আর মাত্র ৫ মিনিট সময় বাকি আছে", audio: "sehri_5.mp3" },
+    { offset: "00:00:05", text: "সেহরি খাওয়ার সময় শেষ হয়ে গিয়েছে", audio: "sehri_0.mp3" }
+];
+
+
+// রাজবাড়ী জেলার রমজানের সেহরি ও ইফতারের সময়সূচি
+let schedule = { 
+    "3-2": { sehri: "05:04 AM", iftar: "06:08 PM", day: 1 },
+    "3-3": { sehri: "05:03 AM", iftar: "06:09 PM", day: 2 },
+    "3-4": { sehri: "05:02 AM", iftar: "06:09 PM", day: 3 },
+    "3-5": { sehri: "05:01 AM", iftar: "06:10 PM", day: 4 },
+    "3-6": { sehri: "05:00 AM", iftar: "06:10 PM", day: 5 },
+    "3-7": { sehri: "04:59 AM", iftar: "06:11 PM", day: 6 },
+    "3-8": { sehri: "04:58 AM", iftar: "06:11 PM", day: 7 },
+    "3-9": { sehri: "04:57 AM", iftar: "06:12 PM", day: 8 },
+    "3-10": { sehri: "04:56 AM", iftar: "06:12 PM", day: 9 },
+    "3-11": { sehri: "04:55 AM", iftar: "06:12 PM", day: 10 },
+    "3-12": { sehri: "04:54 AM", iftar: "06:13 PM", day: 11 },
+    "3-13": { sehri: "04:53 AM", iftar: "06:13 PM", day: 12 },
+    "3-14": { sehri: "04:52 AM", iftar: "06:14 PM", day: 13 },
+    "3-15": { sehri: "04:51 AM", iftar: "06:14 PM", day: 14 },
+    "3-16": { sehri: "04:50 AM", iftar: "06:14 PM", day: 15 },
+    "3-17": { sehri: "04:49 AM", iftar: "06:15 PM", day: 16 },
+    "3-18": { sehri: "04:48 AM", iftar: "06:15 PM", day: 17 },
+    "3-19": { sehri: "04:47 AM", iftar: "06:16 PM", day: 18 },
+    "3-20": { sehri: "04:46 AM", iftar: "06:16 PM", day: 19 },
+    "3-21": { sehri: "04:45 AM", iftar: "06:16 PM", day: 20 },
+    "3-22": { sehri: "04:44 AM", iftar: "06:17 PM", day: 21 },
+    "3-23": { sehri: "04:43 AM", iftar: "06:17 PM", day: 22 },
+    "3-24": { sehri: "04:42 AM", iftar: "06:17 PM", day: 23 },
+    "3-25": { sehri: "04:41 AM", iftar: "06:18 PM", day: 24 },
+    "3-26": { sehri: "04:40 AM", iftar: "06:18 PM", day: 25 },
+    "3-27": { sehri: "04:39 AM", iftar: "06:19 PM", day: 26 },
+    "3-28": { sehri: "04:38 AM", iftar: "06:19 PM", day: 27 },
+    "3-29": { sehri: "04:36 AM", iftar: "06:20 PM", day: 28 },
+    "3-30": { sehri: "04:35 AM", iftar: "06:20 PM", day: 29 },
+    "3-31": { sehri: "04:34 AM", iftar: "06:21 PM", day: 30 }
+};
+
+
+function enableAudio() {
+    audioEnabled = true;
+    document.getElementById("play-button").style.display = "none";
+
+    // iPhone-এ নিশ্চিত করতে ডামি অডিও প্লে করানো
+    globalAudio.src = "sehri.mp3"; // যেকোনো একটি ফাইল ব্যবহার করো
+    globalAudio.load();
+    globalAudio.play().catch(error => console.log("iOS Autoplay Issue Fixed"));
+}
+
+function showTodayRoza() {
+    // আজকের তারিখ বের করা
+    let now = new Date();
+    let month = now.getMonth() + 1; // JavaScript-এ জানুয়ারি = 0, তাই +1 করতে হয়
+    let day = now.getDate();
+
+    // ফরম্যাট করা (3-10 এর মতো বানাতে হবে)
+    let todayKey = `${month}-${day}`;
+
+    // যদি আজকের তারিখ schedule-এ থাকে তাহলে রোজার দিন দেখাও
+    if (schedule[todayKey]) {
+        let rozaDay = schedule[todayKey].day;
+        document.getElementById('rozaDisplay').textContent = `আজ ${rozaDay} তম রোজা, রাজবাড়ী জেলা`;
+    } else {
+        document.getElementById('rozaDisplay').textContent = "আজকের রোজার তথ্য নেই";
+    }
+}
+
+
+
+function initializeTimes() {
+    setAutoSehriTime(); // সেহরি সময় সেট করা
+    setAutoIftarTime(); // ইফতার সময় সেট করা
+    document.getElementById("set-sehri-button").click();
+    document.getElementById("set-iftar-button").click();
+    // ফাংশন কল করা
+    showTodayRoza();
+}
+
+// 🔥 **অটোমেটিক সেহরি টাইম সেট করা**
+function convertTo24HourFormat(time12h) {
+    let [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+        hours += 12;
+    }
+    if (modifier === "AM" && hours === 12) {
+        hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}
+
+function setAutoSehriTime() {
+    let now = new Date();
+    let month = now.getMonth() + 1;
+    let day = now.getDate();
+    let key = `${month}-${day}`;
+
+    if (schedule[key]) {
+        sehriTime = convertTo24HourFormat(schedule[key].sehri) + ":00"; // ২৪-ঘণ্টা ফরম্যাট
+        document.getElementById("sehri-time").value = sehriTime.slice(0, 5); // UI-তে সেট করা
+
+// নতুন সেহরি সময় অনুযায়ী কাউন্টডাউন শুরু করো
+        startCountdown(sehriTime);
+    }
+}
+
+
+function setSehriTime() {  
+    let userTime = document.getElementById("sehri-time").value;
+
+    if (userTime) {
+        sehriTime = userTime + ":00"; // সেকেন্ড যোগ করা হলো
+        let sehriDisplay = document.getElementById("sehri-display");
+
+        if (sehriDisplay) {
+            sehriDisplay.innerText = "⏳ সেহরির সময় সেট করা হয়েছে";
+            sehriDisplay.classList.add("show"); // অ্যানিমেশন চালু হবে
+
+            // এখানে startCountdown ফাংশন কল করুন
+            startCountdown(sehriTime); // কল করা হচ্ছে
+
+            // 5 সেকেন্ড পর মেসেজটি সরিয়ে ফেলা
+            setTimeout(() => {
+                sehriDisplay.classList.remove("show"); // মেসেজটি সরিয়ে ফেলবে
+            }, 5000); // 5000 মিলিসেকেন্ড = 5 সেকেন্ড
+
+        }
+    }
+}
+
+
+function setAutoIftarTime() {
+    let now = new Date();
+    let month = now.getMonth() + 1;
+    let day = now.getDate();
+    let key = `${month}-${day}`;
+
+    if (schedule[key]) {
+        let iftarTime = convertTo24HourFormat(schedule[key].iftar) + ":00"; // ২৪-ঘণ্টা ফরম্যাট
+        document.getElementById("iftar-time").value = iftarTime.slice(0, 5); // UI-তে সেট করা
+    }
+}
+
+function setIftarTime() {
+    let userTime = document.getElementById("iftar-time").value;
+    if (userTime) {
+        iftarTime = userTime + ":00"; // সেকেন্ড যোগ করা হলো
+        let iftarDisplay = document.getElementById("iftar-display");
+
+        // ইফতারের সময় সেট করা হয়েছে মেসেজ দেখানো
+        iftarDisplay.innerText = "🌙 ইফতারের সময় সেট করা হয়েছে";
+        iftarDisplay.classList.add("show");
+
+        // 5 সেকেন্ড পর মেসেজটি সরিয়ে ফেলা
+        setTimeout(() => {
+            iftarDisplay.classList.remove("show"); // মেসেজটি সরিয়ে ফেলবে
+        }, 5000); // 5000 মিলিসেকেন্ড = 5 সেকেন্ড
+
+        startIftarCountdown(); // ইফতারের কাউন্টডাউন শুরু করো
+    }
+}
+
+
+
+let currentDay = new Date().getDate(); // পেজ লোডের সময় বর্তমান দিন
+function updateTime() {
+    let now = new Date();
+    let newDay = now.getDate();
+
+    // দিন পরিবর্তন হলে নতুন সেহরি সময় সেট করো
+    if (newDay !== currentDay) {
+        currentDay = newDay;
+        
+        // দিন পরিবর্তন হলে initializeTimes ফাংশন কল করা
+        initializeTimes();
+    }
+    let hours = now.getHours().toString().padStart(2, '0');
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let seconds = now.getSeconds().toString().padStart(2, '0');
+    let formattedTime = `${hours}:${minutes}:${seconds}`;
+
+    if (sehriTime) {
+        messages.forEach(msg => {
+            let targetTime = subtractTime(sehriTime, msg.offset);
+            if (formattedTime === targetTime) {
+                showMessage(msg.text, msg.audio);
+            }
+        });
+    }
+}
+
+let countdownInterval;
+
+// 🔹 ১২-ঘণ্টা থেকে ২৪-ঘণ্টা ফরম্যাটে কনভার্টার
+function convertTo24Hour(time) {
+    let [hours, minutes, period] = time.match(/(\d+):(\d+) (\w+)/).slice(1);
+    if (period === "PM" && hours !== "12") hours = parseInt(hours) + 12;
+    if (period === "AM" && hours === "12") hours = "00";
+    return `${hours}:${minutes}:00`;
+}
+
+// 🔹 নতুন দিন হলে সেহরি সময় আপডেট + কাউন্টডাউন চালু
+function checkForNewDate() {
+    let now = new Date();
+    let today = `${now.getMonth() + 1}-${now.getDate()}`; // "3-9" ফরম্যাট
+
+    if (sehriTimes[today]) { 
+        let sehriTime24 = convertTo24Hour(sehriTimes[today].sehri);
+        startCountdown(sehriTime24); // কাউন্টডাউন চালু
+    }
+}
+
+// 🔥 **লাইভ কাউন্টডাউন ফাংশন**
+function startCountdown(sehriTime) {
+    clearInterval(countdownInterval); // পুরোনো কাউন্টডাউন বন্ধ করবে
+
+    countdownInterval = setInterval(() => {
+        let now = new Date();
+        let sehriDate = new Date();
+        let [h, m, s] = sehriTime.split(":").map(Number);
+        sehriDate.setHours(h, m, s);
+
+        let diff = sehriDate - now;
+        if (diff <= 0) {
+            clearInterval(countdownInterval);
+            document.getElementById("countdown").innerText = "⏳ সেহরির সময় শেষ!";
+            return;
+        }
+
+        let hours = Math.floor(diff / (1000 * 60 * 60));
+        let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerText = `⏳ সেহরির বাকি: ${hours} ঘণ্টা ${minutes} মিনিট ${seconds} সেকেন্ড`;
+    }, 1000);
+}
+
+function startIftarCountdown() {
+    if (!iftarTime) return; // যদি ইফতার সময় সেট না থাকে, তাহলে কিছু করবে না
+
+    let countdownElement = document.getElementById("iftar-countdown");
+
+    function updateCountdown() {
+        let now = new Date();
+        let [hours, minutes, seconds] = iftarTime.split(":").map(Number);
+
+        let iftarDate = new Date();
+        iftarDate.setHours(hours, minutes, seconds);
+
+        let diff = iftarDate - now; // সময়ের পার্থক্য বের করো (মিলিসেকেন্ডে)
+
+        if (diff > 0) {
+            let remainingHours = Math.floor(diff / (1000 * 60 * 60));
+            let remainingMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            let remainingSeconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            countdownElement.innerText = `🌙 ইফতারের বাকি সময়: ${remainingHours} ঘন্টা ${remainingMinutes} মিনিট ${remainingSeconds} সেকেন্ড`;
+            countdownElement.classList.add("show");
+        } else {
+            countdownElement.innerText = "🌙 ইফতারের সময় হয়েছে!";
+            clearInterval(iftarInterval); // কাউন্টডাউন বন্ধ করো
+        }
+    }
+
+    updateCountdown(); // প্রথমবার রান করো
+    iftarInterval = setInterval(updateCountdown, 1000); // প্রতি ১ সেকেন্ডে আপডেট হবে
+}
+
+
+function subtractTime(baseTime, offset) {
+    let [baseH, baseM, baseS] = baseTime.split(":").map(Number);
+    let [offH, offM, offS] = offset.split(":").map(Number);
+
+    let date = new Date();
+    date.setHours(baseH, baseM, baseS);
+    date.setHours(date.getHours() - offH);
+    date.setMinutes(date.getMinutes() - offM);
+    date.setSeconds(date.getSeconds() - offS);
+
+    let h = date.getHours().toString().padStart(2, '0');
+    let m = date.getMinutes().toString().padStart(2, '0');
+    let s = date.getSeconds().toString().padStart(2, '0');
+
+    return `${h}:${m}:${s}`;
+}
+
+function showMessage(text, audioFile) {
+    let messageElement = document.getElementById("message");
+    messageElement.innerText = text;
+    messageElement.classList.add("show");
+
+    if (audioEnabled) {
+        globalAudio.src = audioFile; // গ্লোবাল অডিও অবজেক্ট ব্যবহার করা
+        globalAudio.load();
+        globalAudio.play().catch(error => console.log("iOS Playback Issue: ", error));
+
+        globalAudio.onended = function () {
+            messageElement.classList.remove("show");
+        };
+    }
+}
+
+
+
+function updateClock() { 
+    let now = new Date();
+    
+    // সময় নির্ণয়
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12 || 12;
+    minutes = minutes.toString().padStart(2, '0');
+    seconds = seconds.toString().padStart(2, '0');
+
+    let timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+
+    // বার ও তারিখ নির্ণয় (Monday 10 March 2025 ফরম্যাটে)
+    let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let dayName = days[now.getDay()];
+
+    let day = now.getDate();
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let month = months[now.getMonth()];
+    let year = now.getFullYear();
+    
+    let dateString = `${dayName} ${day} ${month} ${year}`;
+
+    // HTML-এ আপডেট করা
+    document.getElementById('liveClock').textContent = timeString;
+    document.getElementById('dateDisplay').textContent = dateString; // নতুন তারিখ ট্যাগে আপডেট হবে
+}
+        
+        setInterval(updateTime, 1000);
+        setInterval(updateClock, 1000);
+        updateClock();
+        setInterval(checkForNewDate, 60000);      // 🔹 প্রতি ১ মিনিট পরপর নতুন তারিখ চেক করবে
+
+    </script>
+</body>
+</html>
